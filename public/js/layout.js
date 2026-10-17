@@ -19,8 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
               <li><a href="/dashboard.html">📊 Dashboard</a></li>
               <li><a href="/assets.html">💻 Assets</a></li>
               <li><a href="/categories.html">📁 Categories</a></li>
-              <!-- Menu Users hanya untuk ADMIN -->
+              <!-- Menu di bawah ini hanya untuk ADMIN -->
               ${user.role === 'ADMIN' ? '<li><a href="/users.html">👥 Users</a></li>' : ''}
+              ${user.role === 'ADMIN' ? '<li><a href="/logs.html">📝 System Logs</a></li>' : ''}
             </ul>
           </aside>
 
