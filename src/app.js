@@ -9,6 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 const { buildSessionMiddleware } = require('./config/session');
 const healthRoutes = require('./routes/health.routes');
 const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes'); // TAMBAHKAN INI
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api', apiLimiter);
 // Routes
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes); // TAMBAHKAN INI
 
 app.use(notFound);
 app.use(errorHandler);
