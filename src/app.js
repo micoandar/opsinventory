@@ -10,7 +10,8 @@ const { buildSessionMiddleware } = require('./config/session');
 const healthRoutes = require('./routes/health.routes');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes'); // TAMBAHKAN INI
-
+const categoryRoutes = require('./routes/category.routes'); // <-- TAMBAHKAN INI
+const assetRoutes = require('./routes/asset.routes');
 const app = express();
 
 app.use(helmet());
@@ -39,7 +40,8 @@ app.use('/api', apiLimiter);
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes); // TAMBAHKAN INI
-
+app.use('/api/v1/assets', assetRoutes);
+app.use('/api/v1/categories', categoryRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
