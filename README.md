@@ -67,8 +67,9 @@ bash
 npm run dev
 Buka browser dan akses: http://localhost:3000
 
-📁 Struktur Proyek
-text
+## 📁 Struktur Proyek
+
+```text
 opsinventory/
 ├── database/       # Skema SQL & Seed data
 ├── logs/           # File log Winston (dibuat otomatis)
