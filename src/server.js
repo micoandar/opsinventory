@@ -2,6 +2,7 @@ require('dotenv').config();
 const app = require('./app');
 const pool = require('./config/database');
 const { store } = require('./config/session');
+const { startMonitorJob } = require('./jobs/monitor.job');
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -9,6 +10,9 @@ const server = app.listen(PORT, () => {
   console.log(`[server] OpsInventory listening on http://localhost:${PORT}`);
   console.log(`[server] Health check: http://localhost:${PORT}/api/v1/health`);
   console.log(`[server] Environment: ${process.env.NODE_ENV || 'development'}`);
+
+  // Jalankan Scheduler Monitoring
+  startMonitorJob();
 });
 
 let shuttingDown = false;

@@ -22,13 +22,30 @@ const assignmentRoutes = require('./routes/assignment.routes');
 const maintenanceRoutes = require('./routes/maintenance.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const logRoutes = require('./routes/log.routes');
+const monitorRoutes = require('./routes/monitor.routes');
+const incidentRoutes = require('./routes/incident.routes');
 
 const app = express();
 
 // ==========================================
 // 1. Global Middleware
 // ==========================================
-app.use(helmet());
+// Security Headers (Updated for Chart.js CDN)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'"]
+      },
+    },
+  })
+);
+
 app.use(requestId);
 
 // Setup Morgan (HTTP Request Logger)
@@ -69,16 +86,11 @@ app.use('/api/v1/assignments', assignmentRoutes);
 app.use('/api/v1/maintenance', maintenanceRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/logs', logRoutes);
+app.use('/api/v1/monitors', monitorRoutes);
+app.use('/api/v1/incidents', incidentRoutes);
 
 // ==========================================
-// 3. RUTE SIMULASI ERROR (KHUSUS TES)
-// ==========================================
-//app.get('/api/v1/debug-error', (req, res, next) => {
- // next(new Error('Ini adalah simulasi error 500 untuk tes logging!'));
-//});
-
-// ==========================================
-// 4. Error Handling (Harus paling bawah)
+// 3. Error Handling (Harus paling bawah)
 // ==========================================
 app.use(notFound);
 app.use(errorHandler);

@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             <ul class="sidebar-menu">
               <li><a href="/dashboard.html">📊 Dashboard</a></li>
               <li><a href="/assets.html">💻 Assets</a></li>
+              <li><a href="/monitoring.html">📡 Monitoring</a></li> <!-- TAMBAHKAN BARIS INI -->
+              <li><a href="/incidents.html">🚨 Incidents</a></li> <!-- TAMBAHKAN BARIS INI -->
               <li><a href="/categories.html">📁 Categories</a></li>
               <!-- Menu di bawah ini hanya untuk ADMIN -->
               ${user.role === 'ADMIN' ? '<li><a href="/users.html">👥 Users</a></li>' : ''}
