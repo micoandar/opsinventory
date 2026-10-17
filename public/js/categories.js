@@ -25,7 +25,6 @@ document.addEventListener('layoutReady', async () => {
       </table>
     </div>
 
-    <!-- Modal Form -->
     <div class="modal-overlay" id="categoryModal">
       <div class="modal-box">
         <div class="modal-header">
@@ -37,11 +36,11 @@ document.addEventListener('layoutReady', async () => {
             <input type="hidden" id="categoryId">
             <div class="form-group">
               <label>Nama Kategori *</label>
-              <input type="text" id="categoryName" required placeholder="Contoh: Laptop, Monitor">
+              <input type="text" id="categoryName" required>
             </div>
             <div class="form-group">
               <label>Deskripsi</label>
-              <textarea id="categoryDesc" rows="3" placeholder="Keterangan singkat..."></textarea>
+              <textarea id="categoryDesc" rows="3"></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -55,28 +54,29 @@ document.addEventListener('layoutReady', async () => {
 
   const modal = document.getElementById('categoryModal');
   const form = document.getElementById('categoryForm');
+  let categoriesData = []; // Simpan data di memori
 
-  // 1. Load Data
   async function loadCategories() {
     const tbody = document.getElementById('categoryTableBody');
     tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Memuat data...</td></tr>';
     
     try {
       const res = await apiFetch('/categories');
-      const data = res.data;
+      categoriesData = res.data;
       
-      if (data.length === 0) {
+      if (categoriesData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Belum ada kategori.</td></tr>';
       } else {
-        tbody.innerHTML = data.map(cat => `
+        // Gunakan data-action
+        tbody.innerHTML = categoriesData.map(cat => `
           <tr style="border-bottom: 1px solid var(--border);">
             <td style="padding: 1rem;">${cat.id}</td>
             <td style="padding: 1rem; font-weight: 600;">${cat.name}</td>
             <td style="padding: 1rem; color: var(--text-muted);">${cat.description || '-'}</td>
             ${canEdit ? `
               <td style="padding: 1rem; text-align: right;">
-                <button class="action-btn edit" onclick='openModal("edit", ${JSON.stringify(cat).replace(/'/g, "&#39;")})'>Edit</button>
-                <button class="action-btn delete" onclick="deleteCategory(${cat.id})">Hapus</button>
+                <button class="action-btn edit" data-action="edit" data-id="${cat.id}">Edit</button>
+                <button class="action-btn delete" data-action="delete" data-id="${cat.id}">Hapus</button>
               </td>
             ` : ''}
           </tr>
@@ -87,8 +87,19 @@ document.addEventListener('layoutReady', async () => {
     }
   }
 
-  // 2. Buka Modal
-  window.openModal = (mode, cat = null) => {
+  // Event Delegation
+  document.getElementById('categoryTableBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = Number(btn.dataset.id);
+    const cat = categoriesData.find(c => c.id === id);
+
+    if (action === 'edit') openModal('edit', cat);
+    if (action === 'delete') deleteCategory(id);
+  });
+
+  function openModal(mode, cat = null) {
     form.reset();
     document.getElementById('categoryId').value = '';
     
@@ -101,19 +112,16 @@ document.addEventListener('layoutReady', async () => {
       document.getElementById('modalTitle').textContent = 'Tambah Kategori';
     }
     modal.classList.add('active');
-  };
+  }
 
-  // 3. Tutup Modal
   const closeModal = () => modal.classList.remove('active');
   document.getElementById('btnCloseModal').addEventListener('click', closeModal);
   document.getElementById('btnCancelModal').addEventListener('click', closeModal);
 
-  // 4. Submit Form
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btnSaveCategory');
     const id = document.getElementById('categoryId').value;
-    
     const payload = {
       name: document.getElementById('categoryName').value.trim(),
       description: document.getElementById('categoryDesc').value.trim()
@@ -122,11 +130,9 @@ document.addEventListener('layoutReady', async () => {
     btn.textContent = 'Menyimpan...'; btn.disabled = true;
 
     try {
-      if (id) {
-        await apiFetch(`/categories/${id}`, { method: 'PATCH', body: payload });
-      } else {
-        await apiFetch('/categories', { method: 'POST', body: payload });
-      }
+      if (id) await apiFetch(`/categories/${id}`, { method: 'PATCH', body: payload });
+      else await apiFetch('/categories', { method: 'POST', body: payload });
+      
       closeModal();
       loadCategories();
     } catch (err) {
@@ -136,22 +142,16 @@ document.addEventListener('layoutReady', async () => {
     }
   });
 
-  // 5. Hapus Data
-  window.deleteCategory = async (id) => {
+  async function deleteCategory(id) {
     if (!confirm('Hapus kategori ini? Pastikan tidak ada aset yang menggunakan kategori ini.')) return;
     try {
       await apiFetch(`/categories/${id}`, { method: 'DELETE' });
       loadCategories();
     } catch (err) {
-      // Tangkap error jika kategori masih dipakai oleh aset (RESTRICT foreign key)
-      alert('Gagal menghapus: Kategori ini mungkin sedang digunakan oleh aset lain.');
+      alert('Gagal menghapus: Kategori ini mungkin sedang digunakan oleh aset.');
     }
-  };
-
-  if (canEdit) {
-    document.getElementById('btnAddCategory').addEventListener('click', () => window.openModal('create'));
   }
 
-  // Load awal
+  if (canEdit) document.getElementById('btnAddCategory').addEventListener('click', () => openModal('create'));
   loadCategories();
 });

@@ -2,10 +2,8 @@ document.addEventListener('layoutReady', async () => {
   const content = document.getElementById('page-content');
   const user = window.currentUser;
   
-  // Tentukan apakah user boleh mengubah data (Admin / Support)
   const canEdit = user.role === 'ADMIN' || user.role === 'SUPPORT_ENGINEER';
 
-  // Template UI Halaman Assets + Modal
   content.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
       <h2 style="color: var(--navy);">IT Asset Inventory</h2>
@@ -114,33 +112,27 @@ document.addEventListener('layoutReady', async () => {
     </div>
   `;
 
-  // State
   let state = { page: 1, limit: 5, search: '', status: '' };
   let categoriesList = [];
+  let assetsData = []; // Simpan data aset di memori
 
-  // Helper Elements
   const modal = document.getElementById('assetModal');
   const form = document.getElementById('assetForm');
   const catSelect = document.getElementById('assetCategory');
   const btnAdd = document.getElementById('btnAddAsset');
 
-  // 1. Ambil Data Kategori untuk Dropdown
   try {
     const res = await apiFetch('/categories');
     categoriesList = res.data;
     catSelect.innerHTML = '<option value="">Pilih Kategori...</option>' + 
       categoriesList.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  } catch (err) {
-    alert('Gagal memuat kategori: ' + err.message);
-  }
+  } catch (err) { alert('Gagal memuat kategori: ' + err.message); }
 
-  // Helper Badge Status
   function getStatusBadge(status) {
     const colors = { AVAILABLE: 'var(--success)', IN_USE: 'var(--primary)', MAINTENANCE: 'var(--warning)', RETIRED: 'var(--danger)' };
     return `<span style="background: ${colors[status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${status}</span>`;
   }
 
-  // 2. Fetch & Render Tabel
   async function loadAssets() {
     const tbody = document.getElementById('assetTableBody');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Memuat data...</td></tr>';
@@ -148,12 +140,14 @@ document.addEventListener('layoutReady', async () => {
     try {
       const query = new URLSearchParams({ page: state.page, limit: state.limit, search: state.search, status: state.status }).toString();
       const res = await apiFetch(`/assets?${query}`);
-      const { data, pagination } = res;
+      assetsData = res.data;
+      const { pagination } = res;
 
-      if (data.length === 0) {
+      if (assetsData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Tidak ada aset ditemukan.</td></tr>';
       } else {
-        tbody.innerHTML = data.map(asset => `
+        // Gunakan data-action, bukan onclick
+        tbody.innerHTML = assetsData.map(asset => `
           <tr style="border-bottom: 1px solid var(--border);">
             <td style="padding: 1rem; font-weight: 600;">${asset.assetCode}</td>
             <td style="padding: 1rem;">${asset.name}</td>
@@ -162,22 +156,20 @@ document.addEventListener('layoutReady', async () => {
             <td style="padding: 1rem;">${asset.location || '-'}</td>
             ${canEdit ? `
               <td style="padding: 1rem; text-align: right;">
-                <button class="action-btn edit" onclick='openModal("edit", ${JSON.stringify(asset).replace(/'/g, "&#39;")})'>Edit</button>
-                <button class="action-btn delete" onclick="deleteAsset(${asset.id})">Hapus</button>
+                <button class="action-btn edit" data-action="edit" data-id="${asset.id}">Edit</button>
+                <button class="action-btn delete" data-action="delete" data-id="${asset.id}">Hapus</button>
               </td>
             ` : ''}
           </tr>
         `).join('');
       }
 
-      // Pagination
+      // Pagination tanpa onclick
       document.getElementById('pagination').innerHTML = `
         <span style="font-size: 0.9rem; color: var(--text-muted);">Halaman ${pagination.page} dari ${pagination.totalPages || 1} (Total: ${pagination.total})</span>
         <div style="display: flex; gap: 0.5rem;">
-          <button class="btn" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page <= 1 ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page <= 1 ? 'var(--text-muted)' : 'white'};" 
-            onclick="changePage(${pagination.page - 1})" ${pagination.page <= 1 ? 'disabled' : ''}>Prev</button>
-          <button class="btn" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page >= pagination.totalPages ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page >= pagination.totalPages ? 'var(--text-muted)' : 'white'};" 
-            onclick="changePage(${pagination.page + 1})" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>Next</button>
+          <button class="btn" data-action="prev" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page <= 1 ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page <= 1 ? 'var(--text-muted)' : 'white'};" ${pagination.page <= 1 ? 'disabled' : ''}>Prev</button>
+          <button class="btn" data-action="next" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page >= pagination.totalPages ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page >= pagination.totalPages ? 'var(--text-muted)' : 'white'};" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>Next</button>
         </div>
       `;
     } catch (err) {
@@ -185,8 +177,30 @@ document.addEventListener('layoutReady', async () => {
     }
   }
 
-  // 3. Buka Modal (Tambah / Edit)
-  window.openModal = (mode, asset = null) => {
+  // Event Delegation untuk Tabel
+  document.getElementById('assetTableBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = Number(btn.dataset.id);
+    
+    if (action === 'edit') {
+      const asset = assetsData.find(a => a.id === id);
+      openModal('edit', asset);
+    } else if (action === 'delete') {
+      deleteAsset(id);
+    }
+  });
+
+  // Event Delegation untuk Pagination
+  document.getElementById('pagination').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn || btn.disabled) return;
+    if (btn.dataset.action === 'prev') { state.page--; loadAssets(); }
+    if (btn.dataset.action === 'next') { state.page++; loadAssets(); }
+  });
+
+  function openModal(mode, asset = null) {
     form.reset();
     document.getElementById('assetId').value = '';
     
@@ -206,16 +220,13 @@ document.addEventListener('layoutReady', async () => {
     } else {
       document.getElementById('modalTitle').textContent = 'Tambah Aset';
     }
-    
     modal.classList.add('active');
-  };
+  }
 
-  // 4. Tutup Modal
   const closeModal = () => modal.classList.remove('active');
   document.getElementById('btnCloseModal').addEventListener('click', closeModal);
   document.getElementById('btnCancelModal').addEventListener('click', closeModal);
 
-  // 5. Submit Form (Create / Update)
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btnSaveAsset');
@@ -237,13 +248,11 @@ document.addEventListener('layoutReady', async () => {
     btn.textContent = 'Menyimpan...'; btn.disabled = true;
 
     try {
-      if (id) {
-        await apiFetch(`/assets/${id}`, { method: 'PATCH', body: payload });
-      } else {
-        await apiFetch('/assets', { method: 'POST', body: payload });
-      }
+      if (id) await apiFetch(`/assets/${id}`, { method: 'PATCH', body: payload });
+      else await apiFetch('/assets', { method: 'POST', body: payload });
+      
       closeModal();
-      loadAssets(); // Refresh tabel
+      loadAssets();
     } catch (err) {
       alert('Gagal menyimpan: ' + (err.code === 'DUPLICATE_ASSET' ? 'Kode aset atau serial sudah ada.' : err.message));
     } finally {
@@ -251,34 +260,26 @@ document.addEventListener('layoutReady', async () => {
     }
   });
 
-  // 6. Hapus Aset
-  window.deleteAsset = async (id) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus aset ini? Tindakan ini tidak dapat dibatalkan.')) return;
+  async function deleteAsset(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus aset ini?')) return;
     try {
       await apiFetch(`/assets/${id}`, { method: 'DELETE' });
       loadAssets();
-    } catch (err) {
-      alert('Gagal menghapus: ' + err.message);
-    }
-  };
+    } catch (err) { alert('Gagal menghapus: ' + err.message); }
+  }
 
-  // Event Listeners Filter
   let searchTimeout;
   document.getElementById('searchInput').addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
       state.search = e.target.value; state.page = 1; loadAssets();
-    }, 300); // Debounce 300ms agar tidak spam request
+    }, 300);
   });
 
   document.getElementById('statusFilter').addEventListener('change', (e) => {
     state.status = e.target.value; state.page = 1; loadAssets();
   });
-
-  window.changePage = (newPage) => { if (newPage < 1) return; state.page = newPage; loadAssets(); };
   
-  if (canEdit && btnAdd) btnAdd.addEventListener('click', () => window.openModal('create'));
-
-  // Initial Load
+  if (canEdit && btnAdd) btnAdd.addEventListener('click', () => openModal('create'));
   loadAssets();
 });
