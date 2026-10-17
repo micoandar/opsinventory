@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - OpsInventory</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <h1>OpsInventory</h1>
+      <p>IT Asset Management & Monitoring</p>
+      
+      <!-- Kotak Notifikasi Error -->
+      <div id="errorBox" class="alert alert-danger"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Username atau Email</label>
+          <input type="text" id="identifier" required placeholder="admin" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Masuk</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Panggil file JavaScript dari luar (sesuai aturan Content Security Policy) -->
+  <script src="/js/api.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

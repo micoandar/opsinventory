@@ -1,0 +1,351 @@
+/* =========================================
+   1. Variables & Reset
+   ========================================= */
+:root {
+  --navy: #0f172a;
+  --navy-light: #1e293b;
+  --bg: #f1f5f9;
+  --text: #334155;
+  --text-muted: #64748b;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --border: #e2e8f0;
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+body { 
+  background-color: var(--bg); 
+  color: var(--text); 
+}
+
+/* =========================================
+   2. Form & Button Styles (Global)
+   ========================================= */
+.form-group { 
+  margin-bottom: 1.5rem; 
+}
+.form-group label { 
+  display: block; 
+  margin-bottom: 0.5rem; 
+  font-weight: 500; 
+  font-size: 0.9rem; 
+  color: var(--navy);
+}
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-size: 0.95rem;
+}
+.form-group input:focus, 
+.form-group select:focus,
+.form-group textarea:focus { 
+  border-color: var(--primary); 
+}
+
+/* Form Grid (Untuk menyejajarkan input dalam modal) */
+.form-row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 1rem; 
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: center;
+  width: 100%;
+  font-size: 0.95rem;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: #e2e8f0; }
+.btn-danger { background: var(--danger); color: white; }
+
+.alert { padding: 0.75rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 0.9rem; display: none; }
+.alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+
+/* =========================================
+   3. Login Page Styles
+   ========================================= */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+.login-card h1 { color: var(--navy); margin-bottom: 0.5rem; text-align: center; }
+.login-card p { color: var(--text-muted); text-align: center; margin-bottom: 2rem; font-size: 0.9rem; }
+
+/* =========================================
+   4. Layout (Sidebar & Topbar)
+   ========================================= */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: var(--navy);
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  border-bottom: 1px solid var(--navy-light);
+  letter-spacing: 1px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+  background-color: var(--navy-light);
+  color: white;
+  border-left: 4px solid var(--primary);
+  padding-left: calc(1.5rem - 4px);
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+}
+
+/* Topbar */
+.topbar {
+  height: 64px;
+  background-color: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.topbar-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--navy);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.user-badge {
+  background-color: var(--bg);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+.btn-logout {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.btn-logout:hover { text-decoration: underline; }
+
+.content-inner {
+  padding: 2rem;
+  flex: 1;
+}
+
+/* =========================================
+   5. Dashboard Stats
+   ========================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stat-card h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* =========================================
+   6. Table & Action Buttons
+   ========================================= */
+table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+table tr:hover td {
+  background-color: #f8fafc;
+}
+
+.action-btn {
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  font-size: 0.9rem; 
+  margin-right: 0.5rem;
+  font-weight: 500;
+}
+.action-btn.edit { color: var(--primary); }
+.action-btn.edit:hover { text-decoration: underline; }
+.action-btn.delete { color: var(--danger); }
+.action-btn.delete:hover { text-decoration: underline; }
+
+/* =========================================
+   7. Modal Styles (FIX SCROLL)
+   ========================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transform: translateY(20px);
+  transition: all 0.2s;
+  
+  /* Kunci agar modal tidak melebihi layar */
+  max-height: 90vh; 
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Mencegah konten tumpah */
+}
+
+.modal-overlay.active .modal-box {
+  transform: translateY(0);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  z-index: 10;
+}
+
+.modal-header h3 { color: var(--navy); margin: 0; }
+.modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+/* TAMBAHKAN INI: Agar form mengikuti tinggi modal-box */
+.modal-box form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden; 
+}
+
+.modal-body { 
+  padding: 1.5rem; 
+  /* Body akan scroll jika kontennya panjang */
+  overflow-y: auto; 
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  background: white;
+  z-index: 10;
+}

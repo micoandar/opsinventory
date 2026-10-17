@@ -12,6 +12,8 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes'); // TAMBAHKAN INI
 const categoryRoutes = require('./routes/category.routes'); // <-- TAMBAHKAN INI
 const assignmentRoutes = require('./routes/assignment.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
+const path = require('path'); // TAMBAHKAN INI di atas
 const maintenanceRoutes = require('./routes/maintenance.routes');
 const assetRoutes = require('./routes/asset.routes');
 const app = express();
@@ -42,10 +44,12 @@ app.use('/api', apiLimiter);
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes); // TAMBAHKAN INI
+app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/assignments', assignmentRoutes);
 app.use('/api/v1/maintenance', maintenanceRoutes);
 app.use('/api/v1/assets', assetRoutes);
 app.use('/api/v1/categories', categoryRoutes);
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(notFound);
 app.use(errorHandler);
 
