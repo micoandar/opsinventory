@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <!-- Menu di bawah ini hanya untuk ADMIN -->
               ${user.role === 'ADMIN' ? '<li><a href="/users.html">👥 Users</a></li>' : ''}
               ${user.role === 'ADMIN' ? '<li><a href="/logs.html">📝 System Logs</a></li>' : ''}
+              ${user.role === 'ADMIN' || user.role === 'SUPPORT_ENGINEER' ? '<li><a href="/reports.html">📈 Reports</a></li>' : ''}
             </ul>
           </aside>
 

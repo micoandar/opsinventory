@@ -24,6 +24,7 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 const logRoutes = require('./routes/log.routes');
 const monitorRoutes = require('./routes/monitor.routes');
 const incidentRoutes = require('./routes/incident.routes');
+const reportRoutes = require('./routes/report.routes');
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/logs', logRoutes);
 app.use('/api/v1/monitors', monitorRoutes);
 app.use('/api/v1/incidents', incidentRoutes);
+app.use('/api/v1/reports', reportRoutes);
 
 // ==========================================
 // 3. Error Handling (Harus paling bawah)
