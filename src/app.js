@@ -21,7 +21,7 @@ const assetRoutes = require('./routes/asset.routes');
 const assignmentRoutes = require('./routes/assignment.routes');
 const maintenanceRoutes = require('./routes/maintenance.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
-const logRoutes = require('./routes/log.routes');
+const logRoutes = require('./routes/log.routes'); // <-- Perbaikan (tanpa 's')
 const monitorRoutes = require('./routes/monitor.routes');
 const incidentRoutes = require('./routes/incident.routes');
 const reportRoutes = require('./routes/report.routes');
@@ -31,7 +31,7 @@ const app = express();
 // ==========================================
 // 1. Global Middleware
 // ==========================================
-// Security Headers (Updated for Chart.js CDN)
+// Security Headers (Mengizinkan Google Fonts & CDN Chart.js)
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -58,13 +58,21 @@ app.use(morgan(morganFormat, { stream: logger.stream }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+// Serve Static Files (Frontend)
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Redirect Root URL (localhost:3000) ke Login
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
+
+// Session Middleware
 app.use(buildSessionMiddleware());
 
 // Global Rate Limiter
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
+  windowMs: 15 * 60 * 1000, // 15 menit
+  max: 300, // Maksimal 300 request per 15 menit
   standardHeaders: true,
   legacyHeaders: false,
   message: {

@@ -20,16 +20,16 @@ document.addEventListener('layoutReady', async () => {
       </select>
     </div>
 
-    <div style="background: white; border-radius: 8px; border: 1px solid var(--border); overflow: hidden;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead style="background: var(--bg); border-bottom: 1px solid var(--border);">
+    <div class="table-container">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 1rem;">Code</th>
-            <th style="padding: 1rem;">Title</th>
-            <th style="padding: 1rem;">Severity</th>
-            <th style="padding: 1rem;">Status</th>
-            <th style="padding: 1rem;">Opened At</th>
-            <th style="padding: 1rem; text-align: right;">Actions</th>
+            <th>Code</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Opened At</th>
+            <th style="text-align: right;">Actions</th>
           </tr>
         </thead>
         <tbody id="incidentTableBody">
@@ -43,13 +43,13 @@ document.addEventListener('layoutReady', async () => {
   let state = { page: 1, limit: 10, search: '', status: '' };
 
   function getSeverityBadge(sev) {
-    const colors = { CRITICAL: 'var(--danger)', HIGH: '#f97316', MEDIUM: 'var(--warning)', LOW: 'var(--primary)' };
-    return `<span style="background: ${colors[sev]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${sev}</span>`;
+    return `<span class="badge badge-${sev.toLowerCase()}">${sev}</span>`;
   }
   
   function getStatusBadge(status) {
-    const colors = { OPEN: 'var(--danger)', IN_PROGRESS: 'var(--warning)', RESOLVED: 'var(--success)', CLOSED: 'var(--text-muted)' };
-    return `<span style="background: ${colors[status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${status}</span>`;
+    const cssClass = status.toLowerCase().replace('_', '-'); 
+    const targetClass = cssClass === 'in-progress' ? 'in_progress' : cssClass;
+    return `<span class="badge badge-${targetClass}">${status}</span>`;
   }
 
   async function loadIncidents() {
@@ -65,13 +65,13 @@ document.addEventListener('layoutReady', async () => {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Tidak ada insiden ditemukan.</td></tr>';
       } else {
         tbody.innerHTML = data.map(inc => `
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 1rem; font-family: monospace; font-size: 0.9rem;">${inc.incident_code}</td>
-            <td style="padding: 1rem; font-weight: 600;">${inc.title}</td>
-            <td style="padding: 1rem;">${getSeverityBadge(inc.severity)}</td>
-            <td style="padding: 1rem;">${getStatusBadge(inc.status)}</td>
-            <td style="padding: 1rem; font-size: 0.9rem;">${new Date(inc.opened_at).toLocaleString('id-ID')}</td>
-            <td style="padding: 1rem; text-align: right;">
+          <tr>
+            <td style="font-family: monospace;">${inc.incident_code}</td>
+            <td style="font-weight: 600;">${inc.title}</td>
+            <td>${getSeverityBadge(inc.severity)}</td>
+            <td>${getStatusBadge(inc.status)}</td>
+            <td>${new Date(inc.opened_at).toLocaleString('id-ID')}</td>
+            <td style="text-align: right;">
               <a href="/incident-detail.html?id=${inc.id}" class="action-btn edit" style="text-decoration: none;">Lihat Detail</a>
             </td>
           </tr>
@@ -81,8 +81,8 @@ document.addEventListener('layoutReady', async () => {
       document.getElementById('pagination').innerHTML = `
         <span style="font-size: 0.9rem; color: var(--text-muted);">Halaman ${pagination.page} dari ${pagination.totalPages || 1} (Total: ${pagination.total})</span>
         <div style="display: flex; gap: 0.5rem;">
-          <button class="btn" data-action="prev" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page <= 1 ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page <= 1 ? 'var(--text-muted)' : 'white'};" ${pagination.page <= 1 ? 'disabled' : ''}>Prev</button>
-          <button class="btn" data-action="next" style="width: auto; padding: 0.5rem 1rem; background: ${pagination.page >= pagination.totalPages ? 'var(--border)' : 'var(--primary)'}; color: ${pagination.page >= pagination.totalPages ? 'var(--text-muted)' : 'white'};" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>Next</button>
+          <button class="btn btn-secondary" data-action="prev" style="width: auto; padding: 0.5rem 1rem;" ${pagination.page <= 1 ? 'disabled' : ''}>Prev</button>
+          <button class="btn btn-primary" data-action="next" style="width: auto; padding: 0.5rem 1rem;" ${pagination.page >= pagination.totalPages ? 'disabled' : ''}>Next</button>
         </div>
       `;
     } catch (err) {
@@ -107,7 +107,6 @@ document.addEventListener('layoutReady', async () => {
     state.status = e.target.value; state.page = 1; loadIncidents();
   });
 
-  // Buat insiden manual (sederhana via prompt)
   if (canEdit) {
     document.getElementById('btnAddIncident').addEventListener('click', async () => {
       const title = prompt('Judul Insiden:');

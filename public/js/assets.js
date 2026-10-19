@@ -128,10 +128,10 @@ document.addEventListener('layoutReady', async () => {
       categoriesList.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
   } catch (err) { alert('Gagal memuat kategori: ' + err.message); }
 
-  function getStatusBadge(status) {
-    const colors = { AVAILABLE: 'var(--success)', IN_USE: 'var(--primary)', MAINTENANCE: 'var(--warning)', RETIRED: 'var(--danger)' };
-    return `<span style="background: ${colors[status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${status}</span>`;
-  }
+function getStatusBadge(status) {
+  const cssClass = status.toLowerCase(); // 'UP' -> 'up', 'DOWN' -> 'down'
+  return `<span class="badge badge-${cssClass}">${status}</span>`;
+}
 
   async function loadAssets() {
     const tbody = document.getElementById('assetTableBody');

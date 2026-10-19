@@ -1,351 +1,116 @@
-/* =========================================
-   1. Variables & Reset
-   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --navy: #0f172a;
-  --navy-light: #1e293b;
-  --bg: #f1f5f9;
-  --text: #334155;
-  --text-muted: #64748b;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  --bg-body: #f4f7f6;
+  --surface: #ffffff;
+  --sidebar-bg: #111827; /* Gelap elegan */
+  --sidebar-hover: #1f2937;
+  --primary: #4f46e5; /* Indigo modern */
+  --primary-hover: #4338ca;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --border: #e2e8f0;
+  --radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
 }
 
-* { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-}
-
-body { 
-  background-color: var(--bg); 
-  color: var(--text); 
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; }
 
 /* =========================================
-   2. Form & Button Styles (Global)
+   LOGIN PAGE (Modern Center Card)
    ========================================= */
-.form-group { 
-  margin-bottom: 1.5rem; 
-}
-.form-group label { 
-  display: block; 
-  margin-bottom: 0.5rem; 
-  font-weight: 500; 
-  font-size: 0.9rem; 
-  color: var(--navy);
-}
-.form-group input, 
-.form-group select, 
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.2s;
-  font-size: 0.95rem;
-}
-.form-group input:focus, 
-.form-group select:focus,
-.form-group textarea:focus { 
-  border-color: var(--primary); 
-}
-
-/* Form Grid (Untuk menyejajarkan input dalam modal) */
-.form-row { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 1rem; 
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  text-align: center;
-  width: 100%;
-  font-size: 0.95rem;
-}
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-hover); }
-.btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: #e2e8f0; }
-.btn-danger { background: var(--danger); color: white; }
-
-.alert { padding: 0.75rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 0.9rem; display: none; }
-.alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+.login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, #e0e7ff, #f4f7f6); }
+.login-card { background: var(--surface); padding: 3rem 2.5rem; border-radius: 20px; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); }
+.login-card h1 { color: var(--text-main); margin-bottom: 0.5rem; text-align: center; font-weight: 800; font-size: 1.8rem; letter-spacing: -0.5px; }
+.login-card p { color: var(--text-muted); text-align: center; margin-bottom: 2rem; font-size: 0.95rem; }
 
 /* =========================================
-   3. Login Page Styles
+   FORMS & BUTTONS
    ========================================= */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.login-card {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-}
-.login-card h1 { color: var(--navy); margin-bottom: 0.5rem; text-align: center; }
-.login-card p { color: var(--text-muted); text-align: center; margin-bottom: 2rem; font-size: 0.9rem; }
+.form-group { margin-bottom: 1.25rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.85rem; color: var(--text-main); }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; outline: none; font-size: 0.95rem; transition: all 0.2s; background: #f9fafb; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; width: 100%; }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4); }
+.btn-secondary { background: white; color: var(--text-main); border: 1.5px solid var(--border); }
+.btn-secondary:hover:not(:disabled) { background: #f9fafb; border-color: #d1d5db; }
 
 /* =========================================
-   4. Layout (Sidebar & Topbar)
+   LAYOUT & SIDEBAR (Glassmorphism Topbar)
    ========================================= */
-.app-wrapper {
-  display: flex;
-  min-height: 100vh;
-}
+.app-wrapper { display: flex; min-height: 100vh; }
+.sidebar { width: 270px; background-color: var(--sidebar-bg); color: #9ca3af; display: flex; flex-direction: column; box-shadow: var(--shadow-md); z-index: 10; }
+.sidebar-header { padding: 1.75rem; font-size: 1.3rem; font-weight: 800; color: white; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; }
+.sidebar-menu { list-style: none; padding: 1rem 0; flex: 1; }
+.sidebar-menu a { display: flex; align-items: center; padding: 0.85rem 1.75rem; color: #9ca3af; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.2s; border-left: 4px solid transparent; }
+.sidebar-menu a:hover { background: var(--sidebar-hover); color: white; }
+.sidebar-menu a.active { background: linear-gradient(90deg, rgba(79, 70, 229, 0.15) 0%, transparent 100%); color: white; border-left-color: var(--primary); }
 
-/* Sidebar */
-.sidebar {
-  width: 260px;
-  background-color: var(--navy);
-  color: #cbd5e1;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s;
-}
-
-.sidebar-header {
-  padding: 1.5rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: white;
-  border-bottom: 1px solid var(--navy-light);
-  letter-spacing: 1px;
-}
-
-.sidebar-menu {
-  list-style: none;
-  padding: 1rem 0;
-  flex: 1;
-}
-
-.sidebar-menu a {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  color: #cbd5e1;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: background 0.2s, color 0.2s;
-}
-
-.sidebar-menu a:hover, .sidebar-menu a.active {
-  background-color: var(--navy-light);
-  color: white;
-  border-left: 4px solid var(--primary);
-  padding-left: calc(1.5rem - 4px);
-}
-
-/* Main Content Area */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg);
-}
-
-/* Topbar */
-.topbar {
-  height: 64px;
-  background-color: white;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-}
-
-.topbar-title {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--navy);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.9rem;
-}
-
-.user-badge {
-  background-color: var(--bg);
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--primary);
-  border: 1px solid var(--border);
-}
-
-.btn-logout {
-  background: none;
-  border: none;
-  color: var(--danger);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-.btn-logout:hover { text-decoration: underline; }
-
-.content-inner {
-  padding: 2rem;
-  flex: 1;
-}
+.main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-body); min-width: 0; }
+.topbar { height: 75px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; position: sticky; top: 0; z-index: 5; }
+.topbar-title { font-weight: 700; font-size: 1.2rem; color: var(--text-main); }
+.user-info { display: flex; align-items: center; gap: 1.25rem; font-size: 0.9rem; font-weight: 600; }
+.user-badge { background: #e0e7ff; color: var(--primary); padding: 0.4rem 0.8rem; border-radius: 999px; font-size: 0.75rem; letter-spacing: 0.5px; }
+.btn-logout { background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 600; transition: color 0.2s; }
+.btn-logout:hover { color: var(--danger); }
+.content-inner { padding: 2.5rem; flex: 1; overflow-y: auto; }
 
 /* =========================================
-   5. Dashboard Stats
+   DASHBOARD CARDS (Neumorphism/Soft)
    ========================================= */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.stat-card h3 {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--navy);
-}
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+.stat-card { background: var(--surface); padding: 1.75rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: transform 0.3s; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.stat-card h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 700; }
+.stat-value { font-size: 2.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
 
 /* =========================================
-   6. Table & Action Buttons
+   TABLES (Clean & Spacious)
    ========================================= */
-table th {
-  font-weight: 600;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-table tr:hover td {
-  background-color: #f8fafc;
-}
+.table-container { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-md); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+table th { background: #f9fafb; padding: 1.2rem 1.5rem; font-weight: 700; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+table td { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
+table tr:hover td { background: #f9fafb; }
 
-.action-btn {
-  background: none; 
-  border: none; 
-  cursor: pointer; 
-  font-size: 0.9rem; 
-  margin-right: 0.5rem;
-  font-weight: 500;
-}
+/* =========================================
+   BADGES & PILLS
+   ========================================= */
+.badge { padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge-available, .badge-up { background: #d1fae5; color: #047857; }
+.badge-in_use, .badge-in_progress { background: #e0e7ff; color: #3730a3; }
+.badge-maintenance, .badge-degraded, .badge-high { background: #fef3c7; color: #b45309; }
+.badge-retired, .badge-down, .badge-error, .badge-critical, .badge-open { background: #fee2e2; color: #b91c1c; }
+.badge-resolved { background: #d1fae5; color: #047857; }
+.badge-closed, .badge-unknown { background: #f3f4f6; color: #4b5563; }
+
+/* Actions */
+.action-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 700; margin-right: 1rem; transition: opacity 0.2s; }
+.action-btn:hover { opacity: 0.7; text-decoration: underline; }
 .action-btn.edit { color: var(--primary); }
-.action-btn.edit:hover { text-decoration: underline; }
 .action-btn.delete { color: var(--danger); }
-.action-btn.delete:hover { text-decoration: underline; }
 
 /* =========================================
-   7. Modal Styles (FIX SCROLL)
+   MODALS
    ========================================= */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-box {
-  background: white;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  transform: translateY(20px);
-  transition: all 0.2s;
-  
-  /* Kunci agar modal tidak melebihi layar */
-  max-height: 90vh; 
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Mencegah konten tumpah */
-}
-
-.modal-overlay.active .modal-box {
-  transform: translateY(0);
-}
-
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  z-index: 10;
-}
-
-.modal-header h3 { color: var(--navy); margin: 0; }
-.modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
-
-/* TAMBAHKAN INI: Agar form mengikuti tinggi modal-box */
-.modal-box form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden; 
-}
-
-.modal-body { 
-  padding: 1.5rem; 
-  /* Body akan scroll jika kontennya panjang */
-  overflow-y: auto; 
-  flex: 1;
-}
-
-.modal-footer {
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  background: white;
-  z-index: 10;
-}
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-box { background: var(--surface); border-radius: 16px; width: 100%; max-width: 550px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: scale(0.95); transition: all 0.3s; max-height: 90vh; display: flex; flex-direction: column; }
+.modal-overlay.active .modal-box { transform: scale(1); }
+.modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { color: var(--text-main); font-size: 1.2rem; font-weight: 800; }
+.modal-close { background: #f3f4f6; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.modal-close:hover { background: #e5e7eb; color: var(--danger); }
+.modal-box form { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.modal-body { padding: 2rem; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #f9fafb; border-radius: 0 0 16px 16px; }

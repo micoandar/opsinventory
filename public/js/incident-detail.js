@@ -15,17 +15,17 @@ document.addEventListener('layoutReady', async () => {
 
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
       <!-- Panel Kiri: Info Tiket -->
-      <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+      <div class="stat-card">
         <h3 style="margin-bottom: 1rem; color: var(--navy);">Informasi Insiden</h3>
         <div id="incidentInfo">Memuat...</div>
       </div>
 
       <!-- Panel Kanan: Timeline & Form -->
-      <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+      <div class="stat-card">
         <h3 style="margin-bottom: 1rem; color: var(--navy);">Riwayat Investigasi</h3>
         <div id="incidentTimeline" style="margin-bottom: 1.5rem; max-height: 300px; overflow-y: auto;">Memuat...</div>
         
-        <form id="noteForm" style="display: ${canEdit ? 'block' : 'none'};">
+        <form id="noteForm" style="display: ${canEdit ? 'block' : 'none'}; border-top: 1px solid var(--border); padding-top: 1.5rem;">
           <div class="form-group">
             <label>Tambahkan Catatan Investigasi</label>
             <textarea id="noteMessage" rows="3" required placeholder="Tulis temuan atau tindakan yang dilakukan..."></textarea>
@@ -37,8 +37,9 @@ document.addEventListener('layoutReady', async () => {
   `;
 
   function getStatusBadge(status) {
-    const colors = { OPEN: 'var(--danger)', IN_PROGRESS: 'var(--warning)', RESOLVED: 'var(--success)', CLOSED: 'var(--text-muted)' };
-    return `<span style="background: ${colors[status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${status}</span>`;
+    const cssClass = status.toLowerCase().replace('_', '-'); 
+    const targetClass = cssClass === 'in-progress' ? 'in_progress' : cssClass;
+    return `<span class="badge badge-${targetClass}">${status}</span>`;
   }
 
   async function loadData() {
@@ -50,14 +51,14 @@ document.addEventListener('layoutReady', async () => {
       
       // Render Info Panel
       document.getElementById('incidentInfo').innerHTML = `
-        <p style="margin-bottom: 0.5rem;"><strong>Kode:</strong> ${inc.incident_code}</p>
-        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> ${getStatusBadge(inc.status)}</p>
-        <p style="margin-bottom: 0.5rem;"><strong>Severity:</strong> ${inc.severity}</p>
-        <p style="margin-bottom: 0.5rem;"><strong>Layanan:</strong> ${inc.service_name || '-'}</p>
-        <p style="margin-bottom: 0.5rem;"><strong>Dibuka:</strong> ${new Date(inc.opened_at).toLocaleString('id-ID')}</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Kode:</strong> <span style="font-family: monospace;">${inc.incident_code}</span></p>
+        <p style="margin-bottom: 0.75rem;"><strong>Status:</strong> ${getStatusBadge(inc.status)}</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Severity:</strong> <span class="badge badge-${inc.severity.toLowerCase()}">${inc.severity}</span></p>
+        <p style="margin-bottom: 0.75rem;"><strong>Layanan:</strong> ${inc.service_name || '-'}</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Dibuka:</strong> ${new Date(inc.opened_at).toLocaleString('id-ID')}</p>
         <hr style="margin: 1rem 0; border: 0; border-top: 1px solid var(--border);">
         <p style="margin-bottom: 0.5rem; font-size: 0.9rem;"><strong>Deskripsi:</strong><br>${inc.description}</p>
-        ${inc.resolution ? `<p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--success);"><strong>Resolusi:</strong><br>${inc.resolution}</p>` : ''}
+        ${inc.resolution ? `<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--success-text);"><strong>Resolusi:</strong><br>${inc.resolution}</p>` : ''}
       `;
 
       // Render Timeline
@@ -69,7 +70,7 @@ document.addEventListener('layoutReady', async () => {
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">
               ${new Date(u.created_at).toLocaleString('id-ID')} - <strong>${u.user_name || 'Sistem'}</strong> (${u.update_type})
             </div>
-            <div style="font-size: 0.95rem;">${u.message}</div>
+            <div style="font-size: 0.95rem; color: var(--text);">${u.message}</div>
           </div>
         `).join('');
       }

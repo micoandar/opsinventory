@@ -9,14 +9,14 @@ document.addEventListener('layoutReady', async () => {
       ${canEdit ? '<button class="btn btn-primary" style="width: auto;" id="btnAddCategory">+ Tambah Kategori</button>' : ''}
     </div>
 
-    <div style="background: white; border-radius: 8px; border: 1px solid var(--border); overflow: hidden;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead style="background: var(--bg); border-bottom: 1px solid var(--border);">
+    <div class="table-container">
+      <table>
+        <thead>
           <tr>
-            <th style="padding: 1rem;">ID</th>
-            <th style="padding: 1rem;">Name</th>
-            <th style="padding: 1rem;">Description</th>
-            ${canEdit ? '<th style="padding: 1rem; text-align: right;">Actions</th>' : ''}
+            <th style="cursor: pointer;" id="thId">ID <span id="sortId">↕</span></th>
+            <th style="cursor: pointer;" id="thName">Name <span id="sortName">↕</span></th>
+            <th>Description</th>
+            ${canEdit ? '<th style="text-align: right;">Actions</th>' : ''}
           </tr>
         </thead>
         <tbody id="categoryTableBody">
@@ -54,7 +54,10 @@ document.addEventListener('layoutReady', async () => {
 
   const modal = document.getElementById('categoryModal');
   const form = document.getElementById('categoryForm');
-  let categoriesData = []; // Simpan data di memori
+  let categoriesData = []; 
+  
+  // State untuk Sorting
+  let sortState = { key: 'id', order: 'ASC' };
 
   async function loadCategories() {
     const tbody = document.getElementById('categoryTableBody');
@@ -63,31 +66,67 @@ document.addEventListener('layoutReady', async () => {
     try {
       const res = await apiFetch('/categories');
       categoriesData = res.data;
-      
-      if (categoriesData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Belum ada kategori.</td></tr>';
-      } else {
-        // Gunakan data-action
-        tbody.innerHTML = categoriesData.map(cat => `
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 1rem;">${cat.id}</td>
-            <td style="padding: 1rem; font-weight: 600;">${cat.name}</td>
-            <td style="padding: 1rem; color: var(--text-muted);">${cat.description || '-'}</td>
-            ${canEdit ? `
-              <td style="padding: 1rem; text-align: right;">
-                <button class="action-btn edit" data-action="edit" data-id="${cat.id}">Edit</button>
-                <button class="action-btn delete" data-action="delete" data-id="${cat.id}">Hapus</button>
-              </td>
-            ` : ''}
-          </tr>
-        `).join('');
-      }
+      renderTable();
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--danger);">Error: ${err.message}</td></tr>`;
     }
   }
 
-  // Event Delegation
+  // Fungsi untuk merender tabel berdasarkan state sorting
+  function renderTable() {
+    const tbody = document.getElementById('categoryTableBody');
+    
+    // Update indikator panah
+    document.getElementById('sortId').textContent = sortState.key === 'id' ? (sortState.order === 'ASC' ? '↑' : '↓') : '↕';
+    document.getElementById('sortName').textContent = sortState.key === 'name' ? (sortState.order === 'ASC' ? '↑' : '↓') : '↕';
+
+    // Proses Sorting
+    const sortedData = [...categoriesData].sort((a, b) => {
+      let valA = a[sortState.key];
+      let valB = b[sortState.key];
+      
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+      
+      if (valA < valB) return sortState.order === 'ASC' ? -1 : 1;
+      if (valA > valB) return sortState.order === 'ASC' ? 1 : -1;
+      return 0;
+    });
+
+    if (sortedData.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">Belum ada kategori.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = sortedData.map(cat => `
+      <tr>
+        <td>${cat.id}</td>
+        <td style="font-weight: 600;">${cat.name}</td>
+        <td style="color: var(--text-muted);">${cat.description || '-'}</td>
+        ${canEdit ? `
+          <td style="text-align: right;">
+            <button class="action-btn edit" data-action="edit" data-id="${cat.id}">Edit</button>
+            <button class="action-btn delete" data-action="delete" data-id="${cat.id}">Hapus</button>
+          </td>
+        ` : ''}
+      </tr>
+    `).join('');
+  }
+
+  // Event Listener untuk Sorting Header
+  document.getElementById('thId').addEventListener('click', () => {
+    sortState.order = (sortState.key === 'id' && sortState.order === 'ASC') ? 'DESC' : 'ASC';
+    sortState.key = 'id';
+    renderTable();
+  });
+
+  document.getElementById('thName').addEventListener('click', () => {
+    sortState.order = (sortState.key === 'name' && sortState.order === 'ASC') ? 'DESC' : 'ASC';
+    sortState.key = 'name';
+    renderTable();
+  });
+
+  // Event Delegation untuk Tombol Edit/Hapus
   document.getElementById('categoryTableBody').addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -153,5 +192,7 @@ document.addEventListener('layoutReady', async () => {
   }
 
   if (canEdit) document.getElementById('btnAddCategory').addEventListener('click', () => openModal('create'));
+  
+  // Muat data pertama kali (default urut berdasarkan ID Ascending)
   loadCategories();
 });
